@@ -43,7 +43,7 @@ h1 {
   flex-direction: column;
   align-items: center;
   padding:20px 20px;
-  box-shadow: -3px -3px 5px rgb(63, 63, 63) , 3px 3px 5px  rgb(130 215 215);
+  box-shadow: -4px -4px 6px rgb(63, 63, 63) , 4px 4px 6px  rgb(130 215 215);
   border-radius: 10px;
   background-color: rgb(48, 47, 47);
 }
@@ -55,8 +55,7 @@ h1 {
   height: 50px;
 }
 
-
-.board-button{
+.board-button {
   width: 50px;
   height: 50px;
   display: flex;
@@ -65,11 +64,16 @@ h1 {
   font-weight: bold;
   margin: 0 5px;
   border: none;
-  background-color: transparent;
   color:#8ae1dd;
-  box-shadow: -2px -2px 4px rgb(63, 63, 63) , 2px 2px 4px rgb(29, 28, 28);
+  box-shadow: -3px -3px 5px rgb(63, 63, 63) , 3px 3px 5px rgb(29, 28, 28);
   border-radius: 5px;
   cursor: pointer;
+}
+
+.board-button:hover{
+  color: rgb(78 78 75);
+  background-color: #8ae1dd;
+  box-shadow: inset -3px -3px 5px rgb(63, 63, 63) , 3px 3px 5px rgb(29, 28, 28);
 }
 
 [data-code="Enter"] {
@@ -94,6 +98,10 @@ h1 {
   width: 100px;
 }
 
+[data-code="MetaLeft"] {
+  width: 100px;
+} 
+
 [data-code="CapsLock"] {
   width: 100px;
 }
@@ -104,7 +112,17 @@ h1 {
 }
 
 [data-code="Space"]{
-  width: 50%;
+  width: 40%;
   cursor: pointer;
+}
+
+.board-button:active{
+  transform: translateY(5px);
+}
+
+.board-active{
+  color: rgb(78 78 75);
+  background-color: #8ae1dd;
+  box-shadow: inset -3px -3px 5px rgb(63, 63, 63) , 3px 3px 5px rgb(29, 28, 28);
 }
 

@@ -1,17 +1,20 @@
-/* eslint-disable import/no-cycle */
-// import ru from './ru.js';
-import en from './en.js';
-import MakeButton from './button.js';
+import { ru } from './ru.js';
+import { en } from './en.js';
+// eslint-disable-next-line import/no-cycle
+import { MakeButton } from './button.js';
+
+const lang = { en, ru };
+console.log(lang);
 
 const boardRows = [
-  ['Backquote', 'Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit5', 'Digit6', 'Digit7', 'Digit8', 'Digit9', 'Digit0', 'Minus', 'Equal', 'Del'],
+  ['Backquote', 'Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit5', 'Digit6', 'Digit7', 'Digit8', 'Digit9', 'Digit0', 'Minus', 'Equal', 'Delete'],
   ['Tab', 'KeyQ', 'KeyW', 'KeyE', 'KeyR', 'KeyT', 'KeyY', 'KeyU', 'KeyI', 'KeyO', 'KeyP', 'BracketLeft', 'BracketRight', 'Backspace'],
   ['CapsLock', 'KeyA', 'KeyS', 'KeyD', 'KeyF', 'KeyG', 'KeyH', 'KeyJ', 'KeyK', 'KeyL', 'Semicolon', 'Quote', 'Backslash', 'Enter'],
-  ['ShiftLeft', 'IntlBackslash', 'KeyZ', 'KeyX', 'KeyC', 'KeyV', 'KeyB', 'KeyN', 'KeyM', 'Comma', 'Period', 'Slash', 'ArrowUp', 'ShiftRight'],
-  ['ControlLeft', 'Win', 'AltLeft', 'Space', 'AltRight', 'ArrowLeft', 'ArrowDown', 'ArrowRight', 'ControlRight'],
+  ['ShiftLeft', 'KeyZ', 'KeyX', 'KeyC', 'KeyV', 'KeyB', 'KeyN', 'KeyM', 'Comma', 'Period', 'Slash', 'ArrowUp', 'ShiftRight'],
+  ['ControlLeft', 'MetaLeft', 'AltLeft', 'Space', 'AltRight', 'ArrowLeft', 'ArrowDown', 'ArrowRight', 'ControlRight'],
 ];
 
-export default function create(tag, classNames, child, parent, ...attr) {
+export function create(tag, classNames, child, parent, ...attr) {
   const el = document.createElement(tag);
   if (classNames) {
     el.classList.add(...classNames.split(' '));
@@ -44,9 +47,16 @@ export default function create(tag, classNames, child, parent, ...attr) {
 
 const h1 = create('h1', 'title', 'Виртуальная клавиатура');
 const main = create('main', '', h1);
-create('textarea', 'user-text', null, main);
+const textarea = create('textarea', 'user-text', null, main);
 const keyboard = create('section', 'keyboard', null, main);
 document.body.prepend(main);
+
+window.addEventListener('load', () => {
+  textarea.addEventListener('blur', () => {
+    textarea.focus();
+  });
+  textarea.focus();
+});
 
 class Keyboard {
   constructor() {
@@ -73,7 +83,36 @@ class Keyboard {
     });
   }
 }
+
 new Keyboard(boardRows).generateBoard();
-document.onkeydown = (e )=> {
-  console.log(e.code);
-}
+
+keyboard.addEventListener('click', (e) => {
+  const buttonCode = e.target.dataset.code;
+  boardRows.forEach((row) => {
+    row.forEach((button) => {
+      if (button === buttonCode) {
+        if (!buttonCode.match(/Del|Tab|Backspace|CapsLock|Enter|ShiftLeft|ArrowUp|ShiftRight|ControlLeft|MetaLeft|AltLeft|Space|AltRight|ArrowLeft|ArrowDown|ArrowRight|ControlRight/)) {
+          textarea.textContent += e.target.textContent;
+        }
+        e.target.classList.add('board-active');
+      }
+      textarea.selectionStart += 1;
+    });
+  });
+});
+
+// const body = document.querySelector('body');
+// body.addEventListener('keydown', (e) => {
+//   const buttonCode = e.code;
+//   boardRows.forEach((row) => {
+//     row.forEach((button) => {
+//       if (button === buttonCode) {
+//         textarea.textContent += e.key;
+//         console.log(e.key);
+//       }
+//     });
+//   });
+// });
+// window.onkeydown = function now(e) {
+//   console.log(e.code);
+// };

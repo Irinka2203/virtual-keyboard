@@ -1,4 +1,4 @@
-export default [
+export const en = [
   {
     small: '`',
     big: '~',
@@ -326,6 +326,11 @@ export default [
     code: 'ControlLeft',
   },
   {
+    small: 'lang',
+    big: null,
+    code: 'MetaLeft',
+  },
+  {
     small: 'Alt',
     big: null,
     code: 'AltLeft',
@@ -364,10 +369,5 @@ export default [
     small: '►',
     big: null,
     code: 'ArrowRight',
-  },
-  {
-    small: 'Win',
-    big: null,
-    code: 'MetaLeft',
   },
 ];

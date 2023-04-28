@@ -1,4 +1,4 @@
-export default [
+export const ru = [
   {
     small: 'CapsLock',
     big: null,
@@ -316,7 +316,7 @@ export default [
     code: 'ArrowRight',
   },
   {
-    small: 'Win',
+    small: 'lang',
     big: null,
     code: 'MetaLeft',
   },
