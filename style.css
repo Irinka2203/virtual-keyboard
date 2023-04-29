@@ -126,3 +126,16 @@ h1 {
   box-shadow: inset -3px -3px 5px rgb(63, 63, 63) , 3px 3px 5px rgb(29, 28, 28);
 }
 
+.info{
+  background-color: whitesmoke;
+  box-sizing: border-box;
+  text-align: center;
+  width: 100%;
+  height: 50px;
+  margin: 20px auto 50px;
+  padding: 20px;
+  font-size: 18px;
+  box-shadow: -3px -3px 5px rgb(63, 63, 63) , 3px 3px 5px  rgb(130 215 215);
+  border-radius: 10px;
+}
+

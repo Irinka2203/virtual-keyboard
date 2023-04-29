@@ -1,4 +1,4 @@
-export const ru = [
+export default [
   {
     small: 'CapsLock',
     big: null,

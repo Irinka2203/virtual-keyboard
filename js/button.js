@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-cycle
-import { create } from './indexs.js';
+import create from './indexs.js';
 
-export class MakeButton {
+export default class MakeButton {
   constructor(
     {
       small, big, code, key,

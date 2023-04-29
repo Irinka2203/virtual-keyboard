@@ -23,6 +23,6 @@ module.exports = {
     sourceType: 'module',
   },
   rules: {
-    'import/prefer-default-export': 0,
+    'no-console': 0,
   },
 };
