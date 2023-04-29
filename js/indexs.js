@@ -47,7 +47,8 @@ export function create(tag, classNames, child, parent, ...attr) {
 
 const h1 = create('h1', 'title', 'Виртуальная клавиатура');
 const main = create('main', '', h1);
-const textarea = create('textarea', 'user-text', null, main);
+let textarea = create('textarea', 'user-text', null, main);
+const text = textarea.value;
 const keyboard = create('section', 'keyboard', null, main);
 document.body.prepend(main);
 
@@ -57,6 +58,16 @@ window.addEventListener('load', () => {
   });
   textarea.focus();
 });
+
+function backspace() {
+  const newArea = textarea;
+  let cursor = textarea.selectionStart;
+  const start = textarea.value.slice(0, cursor);
+  const end = textarea.value.slice(cursor);
+  newArea.value = `${start.slice(0, -1)}${end}`;
+  cursor -= 1;
+  return newArea;
+}
 
 class Keyboard {
   constructor() {
@@ -86,17 +97,34 @@ class Keyboard {
 
 new Keyboard(boardRows).generateBoard();
 
-keyboard.addEventListener('click', (e) => {
+keyboard.addEventListener('mousedown', (e) => {
   const buttonCode = e.target.dataset.code;
   boardRows.forEach((row) => {
     row.forEach((button) => {
       if (button === buttonCode) {
-        if (!buttonCode.match(/Del|Tab|Backspace|CapsLock|Enter|ShiftLeft|ArrowUp|ShiftRight|ControlLeft|MetaLeft|AltLeft|Space|AltRight|ArrowLeft|ArrowDown|ArrowRight|ControlRight/)) {
+        e.target.classList.add('board-active');
+        if (!buttonCode.match(/Del|Tab|Backspace|CapsLock|Enter|ShiftLeft|ShiftRight|ControlLeft|MetaLeft|AltLeft|Space|ControlRight/)) {
           textarea.textContent += e.target.textContent;
         }
-        e.target.classList.add('board-active');
+        if (buttonCode === 'Delete') {
+          textarea = delElement();
+        }
+        if (buttonCode === 'Backspace') {
+          textarea = backspace();
+        }
       }
       textarea.selectionStart += 1;
+    });
+  });
+});
+
+keyboard.addEventListener('mouseup', (e) => {
+  const buttonCode = e.target.dataset.code;
+  boardRows.forEach((row) => {
+    row.forEach((button) => {
+      if ((button === buttonCode) && e.target.classList.contains('board-active')) {
+        e.target.classList.remove('board-active');
+      }
     });
   });
 });
@@ -107,8 +135,7 @@ keyboard.addEventListener('click', (e) => {
 //   boardRows.forEach((row) => {
 //     row.forEach((button) => {
 //       if (button === buttonCode) {
-//         textarea.textContent += e.key;
-//         console.log(e.key);
+//         console.log(e.target);
 //       }
 //     });
 //   });
