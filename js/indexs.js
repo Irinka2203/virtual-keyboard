@@ -4,7 +4,6 @@ import en from './en.js';
 import MakeButton from './button.js';
 
 const lang = { en, ru };
-console.log(lang);
 
 const boardRows = [
   ['Backquote', 'Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit5', 'Digit6', 'Digit7', 'Digit8', 'Digit9', 'Digit0', 'Minus', 'Equal', 'Delete'],
@@ -48,7 +47,7 @@ export default function create(tag, classNames, child, parent, ...attr) {
 const h1 = create('h1', 'title', 'Виртуальная клавиатура');
 const main = create('main', '', h1);
 const textarea = create('textarea', 'user-text', null, main);
-const keyboard = create('section', 'keyboard', null, main);
+const keyboard = create('section', 'keyboard', null, main, ['lang', 'en']);
 create('section', 'info', 'Клавиатура создана в ОС Windows', main);
 document.body.prepend(main);
 
@@ -60,19 +59,18 @@ window.addEventListener('load', () => {
 });
 
 function backspace() {
-  let cursor = textarea.selectionStart;
+  const cursor = textarea.selectionStart;
   const start = textarea.value.slice(0, cursor);
   const end = textarea.value.slice(cursor);
   textarea.value = `${start.slice(0, -1) + end}`;
-  cursor -= 1;
+  textarea.selectionStart -= 1;
 }
 
 function delElement() {
-  let cursor = textarea.selectionStart;
+  const cursor = textarea.selectionStart;
   const start = textarea.value.slice(0, cursor + 1);
   const end = textarea.value.slice(cursor + 1);
   textarea.value = `${start.slice(0, -1)}${end}`;
-  cursor -= 1;
 }
 
 function addSpace() {
@@ -90,6 +88,7 @@ function pressEnter() {
   textarea.value = `${start}\n${end}`;
   cursor += 1;
 }
+
 class Keyboard {
   constructor() {
     this.boardRows = boardRows;
@@ -105,7 +104,7 @@ class Keyboard {
         i + 1,
       ]);
       row.forEach((code) => {
-        const keyObj = en.find((key) => key.code === code);
+        const keyObj = lang.en.find((key) => key.code === code);
         if (keyObj) {
           const keyButton = new MakeButton(keyObj);
           this.keyButtons.push(keyButton);
@@ -118,17 +117,30 @@ class Keyboard {
 
 new Keyboard(boardRows).generateBoard();
 
+keyboard.addEventListener('click', (e) => {
+  const buttonCode = e.target.dataset.code;
+  const buttonboard = document.querySelectorAll('.board-button');
+  if (buttonCode === 'CapsLock') {
+    for (let i = 0; i < buttonboard.length; i += 1) {
+      if (buttonboard[i].textContent.length === 1) {
+        buttonboard[i].textContent = buttonboard[i].textContent.toUpperCase();
+      }
+    }
+  }
+});
+
 keyboard.addEventListener('mousedown', (e) => {
   const buttonCode = e.target.dataset.code;
   boardRows.forEach((row) => {
     row.forEach((button) => {
       if (button === buttonCode) {
         e.target.classList.add('board-active');
-        if (!buttonCode.match(/Del|Tab|Backspace|CapsLock|Enter|ShiftLeft|ShiftRight|ControlLeft|MetaLeft|AltLeft|Space|ControlRight/)) {
-          textarea.textContent += e.target.textContent;
+        if (!buttonCode.match(/Del|Tab|Backspace|CapsLock|Enter|ShiftLeft|ShiftRight|ControlLeft|MetaLeft|AltLeft|AltRight|Space|ControlRight/)) {
+          textarea.value += e.target.textContent;
         }
         if (buttonCode === 'Backspace') {
           backspace();
+          return;
         }
         if (buttonCode === 'Delete') {
           delElement();
@@ -138,6 +150,9 @@ keyboard.addEventListener('mousedown', (e) => {
         }
         if (buttonCode === 'Enter') {
           pressEnter();
+        }
+        if (buttonCode === 'Tab') {
+          textarea.value += '\t';
         }
       }
       textarea.selectionStart += 1;
@@ -158,30 +173,40 @@ keyboard.addEventListener('mouseup', (e) => {
 
 const body = document.querySelector('body');
 body.addEventListener('keydown', (e) => {
+  e.preventDefault();
   const buttonActive = document.querySelectorAll('.board-button');
   buttonActive.forEach((el) => {
     if (el.textContent === e.key) {
-      e.preventDefault();
       el.classList.add('board-active');
     }
   });
   const buttonCode = e.code;
+  if (buttonCode === 'Backspace') {
+    backspace();
+  }
+  if (buttonCode === 'Delete') {
+    delElement();
+  }
+  if (buttonCode === 'Space') {
+    addSpace();
+  }
+  if (buttonCode === 'Enter') {
+    pressEnter();
+  }
+  if (buttonCode === 'Tab') {
+    textarea.value += '\t';
+  }
+  if (buttonCode === 'CapsLock') {
+    for (let i = 0; i < buttonActive.length; i += 1) {
+      if (buttonActive[i].textContent.length === 1) {
+        buttonActive[i].textContent = buttonActive[i].textContent.toUpperCase();
+      }
+    }
+  }
   boardRows.forEach((row) => {
     row.forEach((button) => {
-      if (button === buttonCode && !buttonCode.match(/Del|Tab|Backspace|CapsLock|Enter|ShiftLeft|ShiftRight|ControlLeft|MetaLeft|AltLeft|Space|ControlRight/)) {
-        e.target.textContent += e.key;
-      }
-      if (buttonCode === 'Backspace') {
-        backspace();
-      }
-      if (buttonCode === 'Delete') {
-        delElement();
-      }
-      if (buttonCode === 'Space') {
-        addSpace();
-      }
-      if (buttonCode === 'Enter') {
-        pressEnter();
+      if (button === buttonCode && !buttonCode.match(/Del|Tab|Backspace|CapsLock|Enter|ShiftLeft|ShiftRight|ControlLeft|MetaLeft|AltLeft|AltRight|Space|ControlRight/)) {
+        e.target.value += e.key;
       }
       e.target.selectionStart += 1;
     });
@@ -189,10 +214,10 @@ body.addEventListener('keydown', (e) => {
 });
 
 body.addEventListener('keyup', (e) => {
+  e.preventDefault();
   const buttonActive = document.querySelectorAll('.board-button');
   buttonActive.forEach((el) => {
     if (el.textContent === e.key && el.classList.contains('board-active')) {
-      e.preventDefault();
       el.classList.remove('board-active');
     }
   });
